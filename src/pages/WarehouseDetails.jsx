@@ -169,15 +169,23 @@ export default function WarehouseDetails() {
               </List>
 
               <Box sx={{ mt: 2, textAlign: 'center' }}>
-                {/* show generated per-bin barcode preview only (W{ID}-R{r}K{c}B{b}) */}
+                {/* display warehouse-level stored barcode if available, else display generated barcode for selected */}
+                {warehouse.barcode_url ? (
+                  <img
+                    src={warehouse.barcode_url}
+                    alt="Warehouse barcode"
+                    style={{ maxWidth: '100%', height: 'auto', background: '#fff' }}
+                    onError={(e) => {
+                      console.error('Failed to load warehouse barcode image', e);
+                      // fallback to generated per-bin barcode image by replacing img with generated dataURL
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                ) : null}
+
+                {/* show generated per-bin barcode preview */}
                 <Box sx={{ mt: 2 }}>
-                  {selected && (
-                    <img
-                      src={generateBarcodeDataUrl(selected.codeValue)}
-                      alt="Bin barcode"
-                      style={{ maxWidth: '100%', height: 'auto', background: '#fff' }}
-                    />
-                  )}
+                  <img src={generateBarcodeDataUrl(selected.codeValue)} alt="Bin barcode" style={{ maxWidth: '100%', height: 'auto', background: '#fff' }} />
                 </Box>
 
                 <Box display="flex" gap={1} mt={2} justifyContent="center">
