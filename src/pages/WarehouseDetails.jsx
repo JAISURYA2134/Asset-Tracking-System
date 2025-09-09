@@ -184,7 +184,7 @@ export default function WarehouseDetails() {
                   <Button variant="contained" onClick={handlePrintPdf}>Print barcode (PDF)</Button>
                   <Button variant="outlined" onClick={() => setSelected(null)}>Close</Button>
                 </Box>
-              </Box>
+              </Box> 
             </>
           )}
         </Box>
