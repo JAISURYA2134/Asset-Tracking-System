@@ -27,6 +27,10 @@ export default function Warehouses() {
   // sort state: 'desc' by default so newest entries (higher id) appear first
   const [sortOrder, setSortOrder] = useState("desc");
 
+  // pagination state
+  const PAGE_SIZE = 5;
+  const [page, setPage] = useState(1);
+
   const normalizeList = (data) => {
     if (!data) return [];
     if (Array.isArray(data)) return data;
@@ -42,9 +46,11 @@ export default function Warehouses() {
       const res = await fetch(url);
       const data = await res.json();
       setWarehouses(normalizeList(data));
+      setPage(1); // reset to first page on fresh fetch/search
     } catch (err) {
       console.error("fetch warehouses error", err);
       setWarehouses([]);
+      setPage(1);
     } finally {
       setLoading(false);
     }
@@ -78,7 +84,22 @@ export default function Warehouses() {
     return list;
   }, [warehouses, sortOrder]);
 
+  // pagination: compute total pages and current page slice
+  const totalPages = Math.max(1, Math.ceil(sortedWarehouses.length / PAGE_SIZE));
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+    if (page < 1) setPage(1);
+  }, [page, totalPages]);
+
+  const pagedWarehouses = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return sortedWarehouses.slice(start, start + PAGE_SIZE);
+  }, [sortedWarehouses, page]);
+
   const toggleSort = () => setSortOrder((s) => (s === "asc" ? "desc" : "asc"));
+
+  const goPrev = () => setPage((p) => Math.max(1, p - 1));
+  const goNext = () => setPage((p) => Math.min(totalPages, p + 1));
 
   return (
     <Box>
@@ -120,8 +141,8 @@ export default function Warehouses() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {Array.isArray(sortedWarehouses) && sortedWarehouses.length > 0 ? (
-              sortedWarehouses.map((w) => (
+            {Array.isArray(pagedWarehouses) && pagedWarehouses.length > 0 ? (
+              pagedWarehouses.map((w) => (
                 <TableRow key={w.id} hover>
                   <TableCell>
                     <Button variant="text" onClick={() => navigate(`/dashboard/warehouses/${w.id}`)} sx={{ textTransform: "none", fontWeight: 700 }}>
@@ -146,6 +167,24 @@ export default function Warehouses() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* pagination controls */}
+      <Box display="flex" alignItems="center" justifyContent="space-between" mt={2}>
+        <Box>
+          <Button onClick={goPrev} disabled={page <= 1} variant="outlined" sx={{ mr: 1 }}>
+            Prev
+          </Button>
+          <Button onClick={goNext} disabled={page >= totalPages || sortedWarehouses.length === 0} variant="outlined">
+            Next
+          </Button>
+        </Box>
+
+        <Box>
+          <Typography variant="body2">
+            Page {page} of {totalPages} — {sortedWarehouses.length} item{sortedWarehouses.length !== 1 ? "s" : ""}
+          </Typography>
+        </Box>
+      </Box>
     </Box>
   );
 }

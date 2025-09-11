@@ -68,7 +68,7 @@ const Sidebar = ({ activePage, setActivePage, open, setOpen }) => {
       icon: <Inventory2Icon />,
       children: [
         { text: "Dashboard", path: "/dashboard" },
-        { text: "Asset Creation", path: "/dashboard/create-asset" },
+        { text: "Asset Creation", path: "/dashboard/assets" },
       ],
     },
     {

@@ -8,6 +8,7 @@ import AssignTask from "./AssignTask";
 import WorkerDashboard from "./WorkerDashboard";
 import WorkerTasks from "./WorkerTasks";
 import WarehouseDetails from "./WarehouseDetails";
+import Assets from "./Assets";
 
 export default function Dashboard() {
   return (
@@ -16,6 +17,7 @@ export default function Dashboard() {
         <Route path="" element={<div>Welcome to the Dashboard!</div>} />
         <Route path="warehouses" element={<Warehouses />} />
         <Route path="warehouses/:id" element={<WarehouseDetails />} />
+        <Route path="assets" element={<Assets />} />
         <Route path="create-asset" element={<CreateAsset />} />
         <Route path="create-warehouse" element={<CreateWarehouse />} />
         <Route path="create-assembly" element={<CreateAssembly />} />
